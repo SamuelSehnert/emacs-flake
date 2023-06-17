@@ -42,6 +42,10 @@
         };
       });
 
+      overlays.default = final: prev: {
+        custom-emacs = packages.${prev.system}.default;
+      };
+
       packages = eachSystem (pkgs: {
         default =
           let
