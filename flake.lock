@@ -40,26 +40,6 @@
         "type": "github"
       }
     },
-    "nix-mode": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1682109415,
-        "narHash": "sha256-W/bxCAn4cvzKGbhILxtTiWJ5Wln2w6g4TPgk+ziCXsQ=",
-        "owner": "NixOS",
-        "repo": "nix-mode",
-        "rev": "719feb7868fb567ecfe5578f6119892c771ac5e5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nix-mode",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1686582075,
@@ -95,7 +75,6 @@
     "root": {
       "inputs": {
         "emacs-unstable": "emacs-unstable",
-        "nix-mode": "nix-mode",
         "nixpkgs": "nixpkgs"
       }
     },
