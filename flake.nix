@@ -60,11 +60,12 @@
             fileName = "default.el";
             myEmacsConfig = pkgs.writeText fileName ((builtins.readFile ./lisp/default.el) + ''
               ;; Proof of Nix
-              (setq nix-nixfmt-bin "${pkgs.nixfmt}/bin/nixfmt")
+              (setq nix-nixfmt-bin "${pkgs.lib.getExe pkgs.nixfmt}")
 
-              (setq python-interpreter "${pkgs.python3}/bin/python")
-              (setq python-shell-interpreter "${pkgs.python3}/bin/python")
-              (setq python-check-command "${pkgs.python311Packages.pyflakes}/bin/pyflakes")
+              (setq python-interpreter "${pkgs.lib.getExe pkgs.python3}")
+              (setq python-shell-interpreter "${pkgs.lib.getExe pkgs.python3}")
+              (setq python-check-command "${pkgs.lib.getExe pkgs.python311Packages.pyflakes}")
+              (setq lsp-pylsp-server-command "${pkgs.lib.getExe pkgs.python311Packages.python-lsp-server}")
             '');
           in
           emacsWithPackages (epkgs: (with epkgs.melpaStablePackages; [
@@ -74,6 +75,7 @@
             '')
             nix-mode
             doom-modeline
+            lsp-mode
           ]));
       });
     };

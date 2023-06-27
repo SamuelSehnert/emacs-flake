@@ -27,6 +27,10 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
+(use-package lsp-mode
+  :hook ((python-mode . lsp))
+  :commands lsp)
+
 ;; UI Improvements
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
