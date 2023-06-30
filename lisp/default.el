@@ -6,7 +6,7 @@
 (dolist (mode '(term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (add-hook mode (lambda () (display-line-numbers-mode 0) (evil-mode -1))))
 
 ;; (scroll-bar-mode -1)        ; Disable visible scrollbar
 ;; (tool-bar-mode -1)          ; Disable the toolbar
