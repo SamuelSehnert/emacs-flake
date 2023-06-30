@@ -1,27 +1,16 @@
 {
   description = "To play around with emacs. Lisp + Nix?";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    emacs-unstable = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
 
-  outputs =
-    { self
-    , nixpkgs
-    , emacs-unstable
-    , ...
-    } @ inputs:
+  outputs = { self, nixpkgs, ... }@inputs:
     let
       eachSystem = f:
         # webkitgtk broken for darwin. Sorry darwin users
         nixpkgs.lib.genAttrs [
-          # "aarch64-darwin"
+          "aarch64-darwin"
           "aarch64-linux"
-          # "x86_64-darwin"
+          "x86_64-darwin"
           "x86_64-linux"
         ]
           (system: f nixpkgs.legacyPackages.${system});
@@ -42,9 +31,11 @@
                 ;; (setq inhibit-startup-message t)
               '';
             in
-            "${pkgs.writeShellScriptBin "custom-emacs" ''
-                ${packages.${pkgs.system}.default}/bin/emacs -l ${initFile}
-              ''}/bin/custom-emacs";
+            "${
+            pkgs.writeShellScriptBin "custom-emacs" ''
+              ${packages.${pkgs.system}.default}/bin/emacs -l ${initFile}
+            ''
+          }/bin/custom-emacs";
         };
       });
 
@@ -56,27 +47,71 @@
         default =
           let
             emacsPackage = pkgs.emacs29-pgtk;
-            emacsWithPackages = (pkgs.emacsPackagesFor emacsPackage).emacsWithPackages;
+            emacsWithPackages =
+              (pkgs.emacsPackagesFor emacsPackage).emacsWithPackages;
             fileName = "default.el";
-            myEmacsConfig = pkgs.writeText fileName ((builtins.readFile ./lisp/default.el) + ''
-              ;; Proof of Nix
-              (setq nix-nixfmt-bin "${pkgs.lib.getExe pkgs.nixfmt}")
+            myEmacsConfig = pkgs.writeText fileName
+              ((builtins.readFile ./lisp/default.el) + ''
+              (use-package evil
+                :init
+                (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+                (setq evil-want-keybinding nil)
+                :config
+                (evil-mode 1))
 
-              (setq python-interpreter "${pkgs.lib.getExe pkgs.python3}")
-              (setq python-shell-interpreter "${pkgs.lib.getExe pkgs.python3}")
-              (setq python-check-command "${pkgs.lib.getExe pkgs.python311Packages.pyflakes}")
-              (setq lsp-pylsp-server-command "${pkgs.lib.getExe pkgs.python311Packages.python-lsp-server}")
-            '');
+              (use-package evil-collection
+                :after evil
+                :config
+                (evil-collection-init))
+
+                ;; LSP Things
+                (use-package lsp-mode
+                  :commands (lsp lsp-deferred)
+                  :init (setq lsp-keymap-prefix "C-c l")
+                  :config (lsp-enable-which-key-integration t))
+                ;; LSP things to make sure it has enough resources
+                (setq gc-cons-threshold 100000000)
+                (setq read-process-output-max (* 1024 1024 5)) ;; 5MB
+
+                (use-package company
+                  :hook (prog-mode . company-mode)
+                  :init (setq company-minimum-prefix-length 1
+                    company-idle-delay 0.0))
+
+                (use-package flycheck
+                  :init (
+                    global-flycheck-mode
+                  ))
+
+                ;; Major Modes
+                (use-package nix-mode
+                  :mode ("\\.nix\\'" . nix-mode)
+                  :hook (nix-mode . lsp-deferred)
+                  :init (setq nix-nixfmt-bin "${pkgs.lib.getExe pkgs.nixfmt}"
+                        lsp-nix-nil-server-path "${pkgs.lib.getExe pkgs.nil}"))
+              '');
           in
-          emacsWithPackages (epkgs: (with epkgs.melpaStablePackages; [
-            (pkgs.runCommand fileName { } ''
-              mkdir -p $out/share/emacs/site-lisp
-              cp ${myEmacsConfig} $out/share/emacs/site-lisp/${fileName}
-            '')
-            nix-mode
-            doom-modeline
-            lsp-mode
-          ]));
+          emacsWithPackages (epkgs:
+            (with epkgs; [
+              (pkgs.runCommand fileName { } ''
+                mkdir -p $out/share/emacs/site-lisp
+                cp ${myEmacsConfig} $out/share/emacs/site-lisp/${fileName}
+              '')
+              evil
+              evil-collection
+              # General LSP
+              lsp-mode
+              company
+              flycheck
+
+              # Major modes - Langs
+              nix-mode
+
+              # UI things
+              doom-modeline
+              nerd-icons
+              which-key
+            ]));
       });
     };
 }
