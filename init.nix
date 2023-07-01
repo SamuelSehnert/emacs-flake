@@ -7,9 +7,7 @@ config: pkgs: ''
     (dolist (mode '(term-mode-hook
                     shell-mode-hook
                     eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0)))
-    ;; (add-hook mode (lambda () (evil-mode -1)))
-    )
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
     ;; (scroll-bar-mode -1)        ; Disable visible scrollbar
     ;; (tool-bar-mode -1)          ; Disable the toolbar
@@ -58,6 +56,7 @@ config: pkgs: ''
         :config
             (evil-mode 1))
     (evil-set-initial-state 'eshell-mode 'emacs)
+    (evil-set-initial-state 'nix-repl-mode 'emacs)
 
     (use-package evil-collection
         :after evil
