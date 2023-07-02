@@ -6,7 +6,7 @@
 (dolist (mode '(term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0) (evil-mode -1))))
+(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; (scroll-bar-mode -1)        ; Disable visible scrollbar
 ;; (tool-bar-mode -1)          ; Disable the toolbar
@@ -19,29 +19,75 @@
 
 (set-face-attribute 'default nil :height 150) ; Font size
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; Because of VIM addiction
-
 (load-theme 'wombat)
 (set-face-background 'default "#111")
 
 (setq indent-tabs-mode nil)
 
 (require 'package)
-(package-initialize 'noactivate)
-(eval-when-compile
-  (require 'use-package))
-(setq use-package-always-ensure nil) ; Make sure no packages are installed by emacs
+    (package-initialize 'noactivate)
+    (eval-when-compile
+    (require 'use-package))
+    (setq use-package-always-ensure nil)
+
+;; General
+(use-package magit)
 
 ;; UI Improvements
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+    :init (doom-modeline-mode 1))
 
 (use-package nerd-icons
-  :init (unless (find-font (font-spec :name nerd-icons-font-family))
+:init (unless (find-font (font-spec :name nerd-icons-font-family))
     (nerd-icons-install-fonts t)))
 
 (use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config (setq which-key-idle-delay 1))
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config (setq which-key-idle-delay 1))
 
+(use-package evil
+    :init
+        (setq evil-want-integration t)
+        (setq evil-want-keybinding nil)
+    :config
+        (evil-mode 1))
+(evil-set-initial-state 'eshell-mode 'emacs)
+(evil-set-initial-state 'nix-repl-mode 'emacs)
+
+(use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+
+;; LSP Things
+(use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :init (setq lsp-keymap-prefix "C-c l")
+    :config (lsp-enable-which-key-integration t))
+;; LSP things to make sure it has enough resources
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024 10)) ;; 5MB
+
+(use-package company
+    :hook (prog-mode . company-mode)
+    :init (setq company-minimum-prefix-length 1
+    company-idle-delay 0.0))
+
+(use-package flycheck
+    :init (
+    global-flycheck-mode
+    ))
+
+;; Major Modes
+(use-package nix-mode
+    :mode ("\\.nix\\'" . nix-mode)
+    :hook (nix-mode . lsp-deferred)
+    :init (setq nix-nixfmt-bin "#!#pkgs.nixfmt#!#/bin/nixfmt"
+                lsp-nix-nil-server-path "#!#pkgs.nil#!#/bin/nil"))
+
+(use-package python-mode
+    :mode ("\\.py\\'" . python-mode)
+    :hook (python-mode . lsp-deferred))
+(setq lsp-pylsp-server-command "#!#pkgs.python311Packages.python-lsp-server#!#/bin/pylsp")
+(setq python-check-command "#!#pkgs.python311Packages.pyflakes#!#/bin/pyflakes")

@@ -12,22 +12,26 @@
           "aarch64-linux"
           "x86_64-darwin"
           "x86_64-linux"
-        ] (system: f nixpkgs.legacyPackages.${system});
+        ]
+          (system: f nixpkgs.legacyPackages.${system});
 
-    in rec {
+    in
+    rec {
       formatter = eachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       apps = eachSystem (pkgs: {
         default = {
           type = "app";
-          program = let
-            # This file exists to allow the dashboard to go away.
-            # Only useful when using nix run and also not generally
-            # useful, good proof of concept for now
-            initFile = pkgs.writeText "init.el" ''
-              ;; (setq inhibit-startup-message t)
-            '';
-          in "${
+          program =
+            let
+              # This file exists to allow the dashboard to go away.
+              # Only useful when using nix run and also not generally
+              # useful, good proof of concept for now
+              initFile = pkgs.writeText "init.el" ''
+                ;; (setq inhibit-startup-message t)
+              '';
+            in
+            "${
             pkgs.writeShellScriptBin "custom-emacs" ''
               ${packages.${pkgs.system}.default}/bin/emacs -l ${initFile}
             ''
@@ -40,38 +44,56 @@
       };
 
       packages = eachSystem (pkgs: {
-        default = let
-          emacsPackage = pkgs.emacs29-pgtk;
-          emacsWithPackages =
-            (pkgs.emacsPackagesFor emacsPackage).emacsWithPackages;
-          fileName = "default.el";
-          lispConfig = import ./init.nix;
-          myEmacsConfig = pkgs.writeText fileName (lispConfig { } pkgs);
-        in emacsWithPackages (epkgs:
-          (with epkgs; [
-            (pkgs.runCommand fileName { } ''
-              mkdir -p $out/share/emacs/site-lisp
-              cp ${myEmacsConfig} $out/share/emacs/site-lisp/${fileName}
-            '')
+        default =
+          let
+            emacsPackage = pkgs.emacs29-pgtk;
+            emacsWithPackages =
+              (pkgs.emacsPackagesFor emacsPackage).emacsWithPackages;
+            fileName = "default.el";
+            myEmacsConfig =
+              let
+                parsed = builtins.foldl'
+                  (acc: substring:
+                    if pkgs.lib.strings.hasPrefix "pkgs" substring then
+                      let
+                        list = pkgs.lib.strings.splitString "." substring;
+                        binaryPath = builtins.foldl' (acc: pkg: acc.${pkg}) pkgs (pkgs.lib.lists.remove "pkgs" list);
+                      in
+                      acc + "${binaryPath}"
+                    else
+                      acc + substring
+                  ) ""
+                  # This is an almost acceptable way to find the pkgs to inject.
+                  # Better would be to regex match for ${pkgs.something}, but I lost the battle with regex for now
+                  (pkgs.lib.strings.splitString "#!#" (builtins.readFile ./lisp/default.el));
+              in
+              pkgs.writeText fileName parsed;
+          in
+          emacsWithPackages (epkgs:
+            (with epkgs; [
+              (pkgs.runCommand fileName { } ''
+                mkdir -p $out/share/emacs/site-lisp
+                cp ${myEmacsConfig} $out/share/emacs/site-lisp/${fileName}
+              '')
 
-            # General
-            evil
-            evil-collection
-            magit
+              # General
+              evil
+              evil-collection
+              magit
 
-            # General LSP
-            lsp-mode
-            company
-            flycheck
+              # General LSP
+              lsp-mode
+              company
+              flycheck
 
-            # Major modes - Langs
-            nix-mode
+              # Major modes - Langs
+              nix-mode
 
-            # UI things
-            doom-modeline
-            nerd-icons
-            which-key
-          ]));
+              # UI things
+              doom-modeline
+              nerd-icons
+              which-key
+            ]));
       });
     };
 }

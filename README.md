@@ -11,6 +11,16 @@ be configured through declarative elisp. Who knows!
 or
 `nix build github:SamuelSehnert/emacs-flake` to build into a `result` directory.
 
+# Cool Things
+First, you actually configure this flake with the default.el file. Anytime you want
+to inject a nix built package (say python3 for example), you can use
+`#!#pkgs.python3#!#` as the binary path in the lisp file.
+
+Upon compilation of this flake, Nix will read default.el, and find-replace all `#!#`
+surrounded strings with the respective package. This way of going about this allows
+for emacs to still use the LSP/syntax highlighting/etc for lisp, while using the
+package management power of Nix!
+
 ## Warning:
 The source code, as it stands in this repo, is for testing only.
 This means that there may exist debug statments, unconfigurable options,
