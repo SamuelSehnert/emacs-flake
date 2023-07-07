@@ -1,4 +1,8 @@
-;; Default configuration for flake
+;;; emacs-flake --- Default configuration for flake
+
+;;; Commentary:
+
+;;; Code:
 
 ;; Line numbers
 (column-number-mode)
@@ -22,13 +26,15 @@
 (load-theme 'wombat)
 (set-face-background 'default "#111")
 
+(global-set-key (kbd "C-x C-c") (lambda () (interactive)(message "STOP CLOSING THE ENTIRE PROGRAM!")))
+
 (setq indent-tabs-mode nil)
 
 (require 'package)
     (package-initialize 'noactivate)
     (eval-when-compile
     (require 'use-package))
-    (setq use-package-always-ensure nil)
+    (setq use-package-always-ensure nil) ;; Force Nix to deal with packages
 
 ;; General
 (use-package magit)
@@ -54,6 +60,7 @@
         (evil-mode 1))
 (evil-set-initial-state 'eshell-mode 'emacs)
 (evil-set-initial-state 'nix-repl-mode 'emacs)
+(evil-ex-define-cmd "q[uit]" (lambda () (interactive) (message "STOP TRYING TO EXIT!!"))) ;; Disable :q because I keep quitting by accident
 
 (use-package evil-collection
     :after evil
@@ -67,27 +74,30 @@
     :config (lsp-enable-which-key-integration t))
 ;; LSP things to make sure it has enough resources
 (setq gc-cons-threshold 100000000)
-(setq read-process-output-max (* 1024 1024 10)) ;; 5MB
+(setq read-process-output-max (* 1024 1024 10)) ;; 10MB
 
 (use-package company
-    :hook (prog-mode . company-mode)
-    :init (setq company-minimum-prefix-length 1
-    company-idle-delay 0.0))
+  :hook (prog-mode . company-mode)
+  :init (setq company-minimum-prefix-length 1
+	      company-idle-delay 0.0))
 
 (use-package flycheck
-    :init (
-    global-flycheck-mode
-    ))
+  :init (global-flycheck-mode))
 
 ;; Major Modes
 (use-package nix-mode
-    :mode ("\\.nix\\'" . nix-mode)
-    :hook (nix-mode . lsp-deferred)
-    :init (setq nix-nixfmt-bin "#!#pkgs.nixfmt#!#/bin/nixfmt"
-                lsp-nix-nil-server-path "#!#pkgs.nil#!#/bin/nil"))
+  :mode ("\\.nix\\'" . nix-mode)
+  :hook (nix-mode . lsp-deferred)
+  :init (setq nix-nixfmt-bin "#!#pkgs.nixfmt#!#/bin/nixfmt"
+	      lsp-nix-nil-server-path "#!#pkgs.nil#!#/bin/nil"))
 
 (use-package python-mode
-    :mode ("\\.py\\'" . python-mode)
-    :hook (python-mode . lsp-deferred))
-(setq lsp-pylsp-server-command "#!#pkgs.python311Packages.python-lsp-server#!#/bin/pylsp")
-(setq python-check-command "#!#pkgs.python311Packages.pyflakes#!#/bin/pyflakes")
+  :mode ("\\.py\\'" . python-mode)
+  :hook (python-mode . lsp-deferred)
+  :init (setq lsp-pylsp-server-command "#!#pkgs.python311Packages.python-lsp-server#!#/bin/pylsp"
+              python-check-command "#!#pkgs.python311Packages.pyflakes#!#/bin/pyflakes"))
+
+(use-package ruby-mode
+  :mode ("\\.rb\\'" . ruby-mode)
+  :hook (ruby-mode . lsp-deferred)
+  :init (setq lsp-solargraph-server-command '("#!#pkgs.solargraph#!#/bin/solargraph" "stdio")))
