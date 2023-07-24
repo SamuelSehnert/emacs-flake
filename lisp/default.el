@@ -37,7 +37,8 @@
     (setq use-package-always-ensure nil) ;; Force Nix to deal with packages
 
 ;; General
-(use-package magit)
+(use-package magit
+    :config (setq magit-git-executable "#!#pkgs.git#!#/bin/git"))
 
 ;; UI Improvements
 (use-package doom-modeline
@@ -75,6 +76,7 @@
 ;; LSP things to make sure it has enough resources
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024 10)) ;; 10MB
+(setq create-lockfiles nil)
 
 (use-package company
   :hook (prog-mode . company-mode)
@@ -101,3 +103,5 @@
   :mode ("\\.rb\\'" . ruby-mode)
   :hook (ruby-mode . lsp-deferred)
   :init (setq lsp-solargraph-server-command '("#!#pkgs.solargraph#!#/bin/solargraph" "stdio")))
+
+;;; default.el ends here
