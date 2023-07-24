@@ -19,7 +19,8 @@
 
 ;; (menu-bar-mode -1)          ; Disable the menu bar
 
-(setq visible-bell t)
+(setq visible-bell nil) ; Sound bell is annoying
+(setq ring-bell-function 'ignore) ; Visual bell is annoying
 
 (set-face-attribute 'default nil :height 150) ; Font size
 
