@@ -18,10 +18,11 @@
           "x86_64-darwin"
           "x86_64-linux"
         ]
-          (system: f (import nixpkgs {
-            inherit system;
-            overlays = [ emacs-overlay.overlay ];
-          }));
+          (system:
+            f (import nixpkgs {
+              inherit system;
+              overlays = [ emacs-overlay.overlay ];
+            }));
 
     in
     rec {
@@ -47,40 +48,49 @@
               mypkgs = {
                 nixfmt = pkgs.nixfmt;
                 git = pkgs.git;
+
+                solargraph = pkgs.solargraph;
+                nil = pkgs.nil;
               };
-              split = pkgs.lib.strings.splitString ";#" (builtins.readFile ./lisp/init.el);
+              split = pkgs.lib.strings.splitString ";#"
+                (builtins.readFile ./lisp/init.el);
               parsed = builtins.foldl'
                 (acc: substring:
                   if pkgs.lib.strings.hasPrefix "NIX" substring then
                     let
+                      # Pull out the NIX prefix
                       removed = pkgs.lib.strings.removePrefix "NIX" substring;
-                      split = pkgs.lib.strings.splitString "$" removed;
+                      # Split on commenting ;'s and concat
+                      # This allows for the nix-injections to span multiple lines
+                      inter = builtins.concatStringsSep "\n"
+                        (pkgs.lib.strings.splitString ";" removed);
+                      # Split on $ to find which packages are wanting to be injected
+                      split = pkgs.lib.strings.splitString "$" inter;
                       output = builtins.foldl'
                         (acc: substring:
                           if pkgs.lib.strings.hasPrefix "pkgs." substring then
-                            let
-                              pkg = pkgs.lib.strings.removePrefix "pkgs." substring;
-                            in
-                            acc + "${pkgs.lib.getExe mypkgs.${pkg}}"
+                            let pkg = pkgs.lib.strings.removePrefix "pkgs." substring;
+                            in acc + "${pkgs.lib.getExe mypkgs.${pkg}}"
                           else
-                            acc + substring
-                        ) ""
+                            acc + substring) ""
                         split;
                     in
                     acc + output
                   else
-                    acc + substring
-                ) ""
+                    acc + substring) ""
                 split;
             in
             parsed;
 
-          extraEmacsPackages = epkgs: with epkgs; [
-            nix-mode
-            evil
-            which-key
-            magit
-          ];
+          extraEmacsPackages = epkgs:
+            with epkgs; [
+              nix-mode
+              evil
+              which-key
+              magit
+              vertico
+              consult
+            ];
         };
       });
     };
