@@ -83,14 +83,22 @@
             parsed;
 
           extraEmacsPackages = epkgs:
-            with epkgs; [
-              nix-mode
+            with epkgs; (builtins.filter (p: p != null) [
+              # General
               evil
               which-key
               magit
+
+              # Completion
               vertico
               consult
-            ];
+
+              # Programming
+              nix-mode
+
+              # MacOS
+              (if (pkgs.lib.strings.hasInfix "darwin" pkgs.system) then exec-path-from-shell else null)
+            ]);
         };
       });
     };

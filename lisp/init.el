@@ -27,4 +27,5 @@
 ;#NIX(setq eglot-server-programs '((ruby-mode . ("$pkgs.solargraph$" "socket" "--port" :autoport))
 ;                                  (nix-mode  . ("$pkgs.nil$"))));#
 
-
+(if (string-equal "darwin" (symbol-name system-type))
+    (exec-path-from-shell-initialize))
