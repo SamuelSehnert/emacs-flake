@@ -91,7 +91,7 @@
 
               # Completion
               vertico
-              consult
+              company
 
               # Programming
               nix-mode
