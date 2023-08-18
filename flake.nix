@@ -17,15 +17,13 @@
           "aarch64-linux"
           "x86_64-darwin"
           "x86_64-linux"
-        ]
-          (system:
-            f (import nixpkgs {
-              inherit system;
-              overlays = [ emacs-overlay.overlay ];
-            }));
+        ] (system:
+          f (import nixpkgs {
+            inherit system;
+            overlays = [ emacs-overlay.overlay ];
+          }));
 
-    in
-    rec {
+    in rec {
       formatter = eachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       apps = eachSystem (pkgs: {
@@ -43,47 +41,37 @@
         default = pkgs.emacsWithPackagesFromUsePackage {
           package = pkgs.emacs29;
           defaultInitFile = true;
-          config =
-            let
-              mypkgs = {
-                nixfmt = pkgs.nixfmt;
-                git = pkgs.git;
 
-                solargraph = pkgs.solargraph;
-                nil = pkgs.nil;
-              };
-              split = pkgs.lib.strings.splitString ";#"
-                (builtins.readFile ./lisp/init.el);
-              parsed = builtins.foldl'
-                (acc: substring:
-                  if pkgs.lib.strings.hasPrefix "NIX" substring then
-                    let
-                      # Pull out the NIX prefix
-                      removed = pkgs.lib.strings.removePrefix "NIX" substring;
-                      # Split on commenting ;'s and concat
-                      # This allows for the nix-injections to span multiple lines
-                      inter = builtins.concatStringsSep "\n"
-                        (pkgs.lib.strings.splitString ";" removed);
-                      # Split on $ to find which packages are wanting to be injected
-                      split = pkgs.lib.strings.splitString "$" inter;
-                      output = builtins.foldl'
-                        (acc: substring:
-                          if pkgs.lib.strings.hasPrefix "pkgs." substring then
-                            let pkg = pkgs.lib.strings.removePrefix "pkgs." substring;
-                            in acc + "${pkgs.lib.getExe mypkgs.${pkg}}"
-                          else
-                            acc + substring) ""
-                        split;
-                    in
-                    acc + output
-                  else
-                    acc + substring) ""
-                split;
-            in
-            parsed;
+          config = let
+            filename = ./lisp/init.el;
+            split =
+              pkgs.lib.strings.splitString "\n" (builtins.readFile filename);
+          in builtins.foldl' (acc: line:
+            let
+              regex = ".*(\\$\\{pkgs..*\\}).*";
+              match = builtins.match regex line;
+              injection = if match != null then
+                let
+                  matchSingle = builtins.head match;
+                  splitLine = pkgs.lib.strings.splitString matchSingle line;
+                  binary = let
+                    removePrefix = pkgs.lib.strings.removePrefix;
+                    removeSuffix = pkgs.lib.strings.removeSuffix;
+                    pkgString =
+                      removePrefix "\${pkgs." (removeSuffix "}" matchSingle);
+                    splitPkg = pkgs.lib.strings.splitString "." pkgString;
+                  in builtins.foldl' (acc: pkg: acc.${pkg}) pkgs splitPkg;
+                  # A mystery for the ages. `sp` here is [ "string" ["string"] ] and I have
+                  # no idea why... Thus we have to do (head (tail sp))
+                in (pkgs.lib.strings.removePrefix ";" (builtins.head splitLine))
+                + "${binary}" + ((builtins.head (builtins.tail splitLine)))
+              else
+                line;
+            in acc + "\n" + injection) "" split;
 
           extraEmacsPackages = epkgs:
-            with epkgs; (builtins.filter (p: p != null) [
+            with epkgs;
+            (builtins.filter (p: p != null) [
               # General
               evil
               which-key
@@ -94,10 +82,15 @@
               company
 
               # Programming
+              lsp-mode
               nix-mode
+              slime
 
               # MacOS
-              (if (pkgs.lib.strings.hasInfix "darwin" pkgs.system) then exec-path-from-shell else null)
+              (if (pkgs.lib.strings.hasInfix "darwin" pkgs.system) then
+                exec-path-from-shell
+              else
+                null)
             ]);
         };
       });

@@ -8,29 +8,31 @@
 ;; Generate paired things
 (electric-pair-mode t)
 
-(cua-mode t)
+(cua-mode nil)
 
 (use-package which-key)
 (setq which-key-idle-delay 0.2)
 (which-key-mode)
 
 (use-package magit)
-;#NIX(setq magit-git-executable "$pkgs.git$");#
+;(setq magit-git-executable "${pkgs.git}/bin/git")
 
 (use-package nix-mode)
-;#NIX(setq nix-nixfmt-bin "$pkgs.nixfmt$");#
+;(setq nix-nixfmt-bin "${pkgs.nixfmt}/bin/nixfmt")
 
 (use-package evil)
 (add-hook 'prog-mode-hook 'evil-local-mode) ; Only turn on evil for programming
+(evil-ex-define-cmd "q" 'kill-this-buffer)
 
 (use-package vertico)
 (vertico-mode t)
 
 (use-package eglot)
-;#NIX(setq eglot-server-programs '((ruby-mode . ("$pkgs.solargraph$" "socket" "--port" :autoport))
-;                                  (nix-mode  . ("$pkgs.nil$"))));#
-(use-package flymake)
-(add-hook 'prog-mode-hook 'flymake-mode)
+;(setq eglot-server-programs '((nix-mode  . ("${pkgs.nil}/bin/nil"))
+;                                  (ruby-mode . ("${pkgs.solargraph}/bin/solargraph" "socket" "--port" :autoport))))
+
+(use-package lsp-mode)
+;(setq lsp-solargraph-server-command '("${pkgs.rubyPackages.solargraph}/bin/solargraph" "stdio"))
 
 (use-package company)
 (add-hook 'prog-mode-hook 'company-mode)

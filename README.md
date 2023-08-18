@@ -14,21 +14,21 @@ or
 # Cool Things
 First, you actually configure this flake with the init.el file. Anytime you want
 to inject a nix built package (say python3 for example), you can use
-`$pkgs.python3$` as the binary path in the lisp file within a lisp comment with
+`${pkgs.python3}` as the binary path in the lisp file within a lisp comment with
 some special characters. See below:
 
 ```elisp
-;#NIX(setq python-bin "$pkgs.python3$");#
+;(setq python-bin "${pkgs.python3}/bin/python3")
 ```
 
-Upon compilation of this flake, Nix will read default.el, and find-replace all `#!#`
+Upon compilation of this flake, Nix will read init.el, and find-replace all `${___}`
 surrounded strings with the respective package. This way of going about this allows
 for emacs to still use the LSP/syntax highlighting/etc for lisp, while using the
 package management power of Nix!
 
 Furthermore, since all the injected nix paths occur in elisp comments,
 you can still edit and change the init.el file inside emacs, and have emacs
-evaluate the buffer and apply the changes!
+evaluate the buffer and apply the changes.
 
 ## Warning:
 The source code, as it stands in this repo, is for testing only.
