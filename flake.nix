@@ -48,7 +48,7 @@
               pkgs.lib.strings.splitString "\n" (builtins.readFile filename);
           in builtins.foldl' (acc: line:
             let
-              regex = ".*(\\$\\{pkgs..*\\}).*";
+              regex = ".*(\\$\\{pkgs\\..*}).*";
               match = builtins.match regex line;
               injection = if match != null then
                 let
