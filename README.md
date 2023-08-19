@@ -30,6 +30,9 @@ Furthermore, since all the injected nix paths occur in elisp comments,
 you can still edit and change the init.el file inside emacs, and have emacs
 evaluate the buffer and apply the changes.
 
+If you want a comment with an injection to exist WITHOUT the line being
+injected, use `;;` instead of `;`.
+
 ## Warning:
 The source code, as it stands in this repo, is for testing only.
 This means that there may exist debug statments, unconfigurable options,

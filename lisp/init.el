@@ -10,6 +10,9 @@
 
 (cua-mode nil)
 
+;; No more annoying backup files
+(setq make-backup-files nil)
+
 (use-package which-key)
 (setq which-key-idle-delay 0.2)
 (which-key-mode)
