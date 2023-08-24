@@ -31,11 +31,13 @@
 (vertico-mode t)
 
 (use-package eglot)
-;(setq eglot-server-programs '((nix-mode  . ("${pkgs.nil}/bin/nil"))
-;                                  (ruby-mode . ("${pkgs.solargraph}/bin/solargraph" "socket" "--port" :autoport))))
+(setq eglot-server-programs nil)
+;(add-to-list 'eglot-server-programs '(nix-mode . ("${pkgs.nil}/bin/nil")))
+;(add-to-list 'eglot-server-programs '(ruby-mode . ("${pkgs.rubyPackages.solargraph}/bin/solargraph" "socket" "--port" :autoport)))
+;(add-to-list 'eglot-server-programs '((js-mode javascript-mode typescript-mode rjsx-mode) . ("${pkgs.nodePackages.typescript-language-server}/bin/typescript-language-server" "--stdio")))
 
-(use-package lsp-mode)
-;(setq lsp-solargraph-server-command '("${pkgs.rubyPackages.solargraph}/bin/solargraph" "stdio"))
+;Javascript/typescript
+(setq js-indent-level 2)
 
 (use-package company)
 (add-hook 'prog-mode-hook 'company-mode)

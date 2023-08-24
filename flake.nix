@@ -82,12 +82,11 @@
               company
 
               # Programming
-              lsp-mode
               nix-mode
-              slime
+              rjsx-mode
 
               # MacOS
-              (if (pkgs.lib.strings.hasInfix "darwin" pkgs.system) then
+              (if pkgs.stdenv.isDarwin then
                 exec-path-from-shell
               else
                 null)
