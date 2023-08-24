@@ -73,12 +73,18 @@
             with epkgs;
             (builtins.filter (p: p != null) [
               # General
-              evil
               which-key
+
+              # Projectile
               projectile
               projectile-ripgrep
 
-              # git
+              # Evil
+              evil
+              evil-surround
+              evil-collection
+
+              # Git
               magit
               diff-hl
               blamer

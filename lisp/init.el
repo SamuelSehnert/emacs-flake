@@ -20,6 +20,8 @@
 (use-package magit)
 ;(setq magit-git-executable "${pkgs.git}/bin/git")
 (global-diff-hl-mode)
+(add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
 (global-blamer-mode 1)
 
 (use-package projectile)
@@ -33,7 +35,11 @@
 ;(setq nix-nixfmt-bin "${pkgs.nixfmt}/bin/nixfmt")
 
 (use-package evil)
-(add-hook 'prog-mode-hook 'evil-local-mode) ; Only turn on evil for programming
+(evil-mode 1)
+(global-evil-surround-mode 1)
+(setq evil-want-integration t
+      evil-want-keybinding nil)
+(evil-collection-init)
 (evil-ex-define-cmd "q" 'kill-this-buffer)
 
 (use-package vertico)
