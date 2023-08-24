@@ -20,6 +20,13 @@
 (use-package magit)
 ;(setq magit-git-executable "${pkgs.git}/bin/git")
 
+(use-package projectile)
+(projectile-mode +1)
+;(setq ripgrep-executable "${pkgs.ripgrep}/bin/rg")
+(if (string-equal "darwin" (symbol-name system-type))
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+
 (use-package nix-mode)
 ;(setq nix-nixfmt-bin "${pkgs.nixfmt}/bin/nixfmt")
 
@@ -44,9 +51,14 @@
 (setq company-minimum-prefix-length 1
       company-idle-delay 0.0)
 
-;; Used to make MacOS to get the correct $PATH
 (if (string-equal "darwin" (symbol-name system-type))
-    (exec-path-from-shell-initialize))
+    (progn
+      ;; Used to make MacOS to get the correct $PATH
+      (exec-path-from-shell-initialize)
+      (setq mac-command-modifier 'meta
+            mac-option-modifier 'super
+            mac-control-modifier 'control
+            ns-function-modifier 'hyper)))
 
 (defun fullscreen ()
   (interactive)

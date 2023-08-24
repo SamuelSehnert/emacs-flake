@@ -76,6 +76,8 @@
               evil
               which-key
               magit
+              projectile
+              projectile-ripgrep
 
               # Completion
               vertico
