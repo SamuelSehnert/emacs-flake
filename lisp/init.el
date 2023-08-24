@@ -19,6 +19,8 @@
 
 (use-package magit)
 ;(setq magit-git-executable "${pkgs.git}/bin/git")
+(global-diff-hl-mode)
+(global-blamer-mode 1)
 
 (use-package projectile)
 (projectile-mode +1)

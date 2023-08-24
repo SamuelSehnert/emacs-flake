@@ -75,9 +75,13 @@
               # General
               evil
               which-key
-              magit
               projectile
               projectile-ripgrep
+
+              # git
+              magit
+              diff-hl
+              blamer
 
               # Completion
               vertico
