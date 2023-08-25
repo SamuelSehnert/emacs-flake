@@ -1,15 +1,9 @@
 {
   description = "To play around with emacs. Lisp + Nix?";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    emacs-overlay = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
 
-  outputs = { self, nixpkgs, emacs-overlay }:
+  outputs = { self, nixpkgs }:
     let
       eachSystem = f:
         nixpkgs.lib.genAttrs [
@@ -20,7 +14,7 @@
         ] (system:
           f (import nixpkgs {
             inherit system;
-            overlays = [ emacs-overlay.overlay ];
+            overlays = [ ];
           }));
 
     in rec {
@@ -38,15 +32,14 @@
       };
 
       packages = eachSystem (pkgs: {
-        default = pkgs.emacsWithPackagesFromUsePackage {
+        default = let
           package = pkgs.emacs29;
-          defaultInitFile = true;
 
           config = let
             filename = ./lisp/init.el;
             split =
               pkgs.lib.strings.splitString "\n" (builtins.readFile filename);
-          in builtins.foldl' (acc: line:
+          in pkgs.writeText "default.el" (builtins.foldl' (acc: line:
             let
               regex = ".*(\\$\\{pkgs\\..*}).*";
               match = builtins.match regex line;
@@ -67,12 +60,19 @@
                 + "${binary}" + ((builtins.head (builtins.tail splitLine)))
               else
                 line;
-            in acc + "\n" + injection) "" split;
+            in acc + "\n" + injection) "" split);
 
-          extraEmacsPackages = epkgs:
+          emacsPackages = epkgs:
             with epkgs;
             (builtins.filter (p: p != null) [
+              # Configuration
+              (pkgs.runCommand "default.el" { } ''
+                mkdir -p $out/share/emacs/site-lisp
+                cp ${config} $out/share/emacs/site-lisp/default.el
+              '')
+
               # General
+              vterm
               which-key
               helpful
               dashboard
@@ -103,12 +103,9 @@
               rjsx-mode
 
               # MacOS
-              (if pkgs.stdenv.isDarwin then
-                exec-path-from-shell
-              else
-                null)
+              (if pkgs.stdenv.isDarwin then exec-path-from-shell else null)
             ]);
-        };
+        in (pkgs.emacsPackagesFor package).emacsWithPackages emacsPackages;
       });
     };
 }
