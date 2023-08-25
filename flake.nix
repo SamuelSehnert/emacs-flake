@@ -74,6 +74,8 @@
             (builtins.filter (p: p != null) [
               # General
               which-key
+              helpful
+              dashboard
 
               # Projectile
               projectile
@@ -83,6 +85,7 @@
               evil
               evil-surround
               evil-collection
+              evil-commentary
 
               # Git
               magit
@@ -92,8 +95,10 @@
               # Completion
               vertico
               company
+              orderless
 
               # Programming
+              rainbow-delimiters
               nix-mode
               rjsx-mode
 

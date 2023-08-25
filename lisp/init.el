@@ -34,25 +34,50 @@
 (use-package nix-mode)
 ;(setq nix-nixfmt-bin "${pkgs.nixfmt}/bin/nixfmt")
 
-(use-package evil)
-(evil-mode 1)
-(global-evil-surround-mode 1)
 (setq evil-want-integration t
       evil-want-keybinding nil)
+(evil-mode 1)
+(global-evil-surround-mode 1)
 (evil-collection-init)
+(evil-commentary-mode)
 (evil-ex-define-cmd "q" 'kill-this-buffer)
 
 (use-package vertico)
 (vertico-mode t)
 
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
 (use-package eglot)
-(setq eglot-server-programs nil)
 ;(add-to-list 'eglot-server-programs '(nix-mode . ("${pkgs.nil}/bin/nil")))
 ;(add-to-list 'eglot-server-programs '(ruby-mode . ("${pkgs.rubyPackages.solargraph}/bin/solargraph" "socket" "--port" :autoport)))
 ;(add-to-list 'eglot-server-programs '((js-mode javascript-mode typescript-mode rjsx-mode) . ("${pkgs.nodePackages.typescript-language-server}/bin/typescript-language-server" "--stdio")))
 
 ;Javascript/typescript
 (setq js-indent-level 2)
+
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;; Note that the built-in `describe-function' includes both functions
+;; and macros. `helpful-function' is functions only, so we provide
+;; `helpful-callable' as a drop-in replacement.
+(global-set-key (kbd "C-h f") #'helpful-callable)
+
+(global-set-key (kbd "C-h v") #'helpful-variable)
+(global-set-key (kbd "C-h k") #'helpful-key)
+(global-set-key (kbd "C-h x") #'helpful-command)
+
+
+;; Lookup the current symbol at point. C-c C-d is a common keybinding
+;; for this in lisp modes.
+(global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+;; Look up *F*unctions (excludes macros).
+;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+;; already links to the manual, if a function is referenced there.
+(global-set-key (kbd "C-h F") #'helpful-function)
 
 (use-package company)
 (add-hook 'prog-mode-hook 'company-mode)
@@ -72,3 +97,12 @@
   (interactive)
   (set-frame-parameter nil 'fullscreen
                        (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
+
+;; Setup tabs
+(tab-bar-mode)
+
+;; Hook dashboard into the startup
+(dashboard-setup-startup-hook)
+
+;; Set Control-U to clear the buffer, but only when in a minibuffer
+(define-key minibuffer-local-map (kbd "C-u") #'delete-minibuffer-contents)
