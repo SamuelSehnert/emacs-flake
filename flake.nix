@@ -86,6 +86,7 @@
               evil-surround
               evil-collection
               evil-commentary
+              evil-smartparens
 
               # Git
               magit
@@ -99,6 +100,7 @@
 
               # Programming
               rainbow-delimiters
+              smartparens
               nix-mode
               rjsx-mode
 
