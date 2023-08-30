@@ -1,3 +1,37 @@
+(defun nix-utils/build-binary (package-name &optional binary-name)
+  "Build a Nix package and return the given binary-name path."
+  (unless binary-name (setq binary-name package-name))
+  (let ((formatted-string (format "nix build --no-link --print-out-paths nixpkgs#%s" package-name)))
+    (let ((pathout (shell-command-to-string formatted-string)))
+      (let ((string-split (split-string (string-trim pathout) "\n")))
+        (let ((final-path (car (last string-split))))
+          (let ((binary-path (concat final-path (format "/bin/%s" binary-name))))
+            (if (file-exists-p binary-path)
+                binary-path
+              (error (format "Package (%s) doesn't contain binary (%s)" package-name binary-name)))))))))
+
+
+(defun custom/reset-symbl (symbl)
+  "Reset SYMBL to its standard value."
+  (interactive ;; This (interactive) was ripped directly from 'describe-symbol function
+   (let* ((v-or-f (symbol-at-point))
+          (found (if v-or-f (cl-some (lambda (x) (funcall (nth 1 x) v-or-f))
+                                     describe-symbol-backends)))
+          (v-or-f (if found v-or-f (function-called-at-point)))
+          (found (or found v-or-f))
+          (enable-recursive-minibuffers t)
+          (val (completing-read (format-prompt "Describe symbol"
+                                               (and found v-or-f))
+				#'help--symbol-completion-table
+				(lambda (vv)
+                                  (cl-some (lambda (x) (funcall (nth 1 x) vv))
+                                           describe-symbol-backends))
+				t nil nil
+				(if found (symbol-name v-or-f)))))
+     (list (if (equal val "")
+	       (or v-or-f "") (intern val)))))
+  (set symbl (eval (car (get symbl 'standard-value)))))
+
 ;; Basic Options
 (load-theme 'tango-dark t)
 (setq-default indent-tabs-mode nil) ; Use spaces instead of tabs
@@ -25,7 +59,7 @@
 (which-key-mode)
 
 (use-package magit)
-;(setq magit-git-executable "${pkgs.git}/bin/git")
+(setq magit-git-executable (nix-utils/build-binary "git"))
 (global-diff-hl-mode)
 (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -110,23 +144,3 @@
 ;; Set Control-U to clear the buffer, but only when in a minibuffer
 (define-key minibuffer-local-map (kbd "C-u") #'delete-minibuffer-contents)
 
-(defun custom/reset-symbl (symbl)
-  "Reset SYMBL to its standard value."
-  (interactive ;; This (interactive) was ripped directly from 'describe-symbol function
-   (let* ((v-or-f (symbol-at-point))
-          (found (if v-or-f (cl-some (lambda (x) (funcall (nth 1 x) v-or-f))
-                                     describe-symbol-backends)))
-          (v-or-f (if found v-or-f (function-called-at-point)))
-          (found (or found v-or-f))
-          (enable-recursive-minibuffers t)
-          (val (completing-read (format-prompt "Describe symbol"
-                                               (and found v-or-f))
-				#'help--symbol-completion-table
-				(lambda (vv)
-                                  (cl-some (lambda (x) (funcall (nth 1 x) vv))
-                                           describe-symbol-backends))
-				t nil nil
-				(if found (symbol-name v-or-f)))))
-     (list (if (equal val "")
-	       (or v-or-f "") (intern val)))))
-  (set symbl (eval (car (get symbl 'standard-value)))))
