@@ -1,5 +1,5 @@
 ;; Basic Options
-(load-theme 'tango-dark t)
+(load-theme 'monokai t)
 (setq-default indent-tabs-mode nil) ; Use spaces instead of tabs
 (set-fringe-mode 10) ; Breathing room
 
@@ -61,6 +61,8 @@
 ;(add-to-list 'eglot-server-programs '(ruby-mode . ("${pkgs.rubyPackages.solargraph}/bin/solargraph" "socket" "--port" :autoport)))
 ;(add-to-list 'eglot-server-programs '((js-mode javascript-mode typescript-mode rjsx-mode) . ("${pkgs.nodePackages.typescript-language-server}/bin/typescript-language-server" "--stdio")))
 
+;(setq racket-program "${pkgs.racket}/bin/racket")
+
 ;Javascript/typescript
 (setq js-indent-level 2)
 
@@ -121,12 +123,12 @@
           (enable-recursive-minibuffers t)
           (val (completing-read (format-prompt "Describe symbol"
                                                (and found v-or-f))
-				#'help--symbol-completion-table
-				(lambda (vv)
+                                #'help--symbol-completion-table
+                                (lambda (vv)
                                   (cl-some (lambda (x) (funcall (nth 1 x) vv))
                                            describe-symbol-backends))
-				t nil nil
-				(if found (symbol-name v-or-f)))))
+                                t nil nil
+                                (if found (symbol-name v-or-f)))))
      (list (if (equal val "")
-	       (or v-or-f "") (intern val)))))
+               (or v-or-f "") (intern val)))))
   (set symbl (eval (car (get symbl 'standard-value)))))

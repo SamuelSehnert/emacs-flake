@@ -77,6 +77,9 @@
               helpful
               dashboard
 
+              # Themes
+              monokai-theme
+
               # Projectile
               projectile
               projectile-ripgrep
@@ -103,6 +106,7 @@
               smartparens
               nix-mode
               rjsx-mode
+              racket-mode
 
               # MacOS
               (if pkgs.stdenv.isDarwin then exec-path-from-shell else null)
