@@ -12,26 +12,13 @@ or
 `nix build github:SamuelSehnert/emacs-flake` to build into a `result` directory.
 
 # Cool Things
-First, you actually configure this flake with the init.el file. Anytime you want
-to inject a nix built package (say python3 for example), you can use
-`${pkgs.python3}` as the binary path in the lisp file within a lisp comment with
-some special characters. See below:
+You install all elisp packages directly with `(use-package)`.
 
-```elisp
-;(setq python-bin "${pkgs.python3}/bin/python3")
+However, if you need a runtime dependency, add the package to
 ```
-
-Upon compilation of this flake, Nix will read init.el, and find-replace all `${___}`
-surrounded strings with the respective package. This way of going about this allows
-for emacs to still use the LSP/syntax highlighting/etc for lisp, while using the
-package management power of Nix!
-
-Furthermore, since all the injected nix paths occur in elisp comments,
-you can still edit and change the init.el file inside emacs, and have emacs
-evaluate the buffer and apply the changes.
-
-If you want a comment with an injection to exist WITHOUT the line being
-injected, use `;;` instead of `;`.
+emacsRuntimeDeps = with pkgs; [];
+```
+This gives emacs runtime access to the path of the package.
 
 ## Warning:
 The source code, as it stands in this repo, is for testing only.
