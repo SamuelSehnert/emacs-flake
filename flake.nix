@@ -20,9 +20,7 @@
               inherit system;
               overlays = [ emacs-overlay.overlay ];
             }));
-
-    in
-    rec {
+    in rec {
       formatter = eachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       overlays.default = final: prev: {
@@ -31,21 +29,32 @@
 
       packages = eachSystem (pkgs: {
         default = pkgs.emacsWithPackagesFromUsePackage {
-          config = ./init.el;
+          config = ./init.org;
           defaultInitFile = true;
+          alwaysTangle = true;
+          extraEmacsPackages = epkgs: [
+            (epkgs.trivialBuild rec {
+              ename = "ob-racket";
+              pname = ename;
+              version = "1";
+              src = pkgs.fetchFromGitHub {
+                owner = "hasu";
+                repo = "emacs-ob-racket";
+                rev = "9e3bcf1ac9d88f064203671314095b219f4d6be4";
+                sha256 = "sha256-uHxt96ua4t0Pt9v5GxEhnkRhdZ8y0s/MHT6CvOik0N4=";
+              };
+              buildPhase = ":";
+            })
+          ];
           package =
-            let emacsRuntimeDeps = with pkgs; [ nixfmt ];
-            in pkgs.emacs-unstable.overrideAttrs (prev: {
-              nativeBuildInputs =
-                (if (builtins.hasAttr "nativeBuildInputs" prev) then
-                  prev.nativeBuildInputs
-                else
-                  [ ]) ++ [ pkgs.makeWrapper ];
+            let emacsRuntimeDeps = with pkgs; [
+              nixfmt
+              racket-minimal
+            ];
+            in (pkgs.emacs29.override { withNativeCompilation = false; }).overrideAttrs (prev: {
+              nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.makeWrapper ];
               postFixup = ''
-                ${if (builtins.hasAttr "postFixup" prev) then
-                  prev.postFixup
-                else
-                  ""}
+                ${prev.postFixup}
                 wrapProgram $out/bin/emacs \
                 --prefix PATH : ${pkgs.lib.makeBinPath emacsRuntimeDeps} \
                 --add-flags "--no-splash"
