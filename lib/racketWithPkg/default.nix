@@ -2,7 +2,6 @@
 let
   path = "share/racket-pkgs";
 
-  # { string, src } => drv
   # This function is the builder for each racket package
   mkRacketPkg = { name, src, subpath ? "" }: pkgs.stdenvNoCC.mkDerivation {
     inherit src name;
@@ -39,30 +38,6 @@ let
     { }
     (builtins.attrNames racketPkgDefs);
 
-  flattenDeps = pkgDefWithName:
-    let
-      subpathAttrExists = def: (builtins.hasAttr "subpath" def);
-      defToPkg = def: mkRacketPkg {
-        name = def.name;
-        src = def.src;
-        subpath = if (subpathAttrExists def) then def.subpath else "";
-      };
-      newFlattenVisited = pkgDefWithName': visited:
-        let
-          getDeps = pkg:
-            if builtins.hasAttr pkg.name visited
-            then [ ]
-            else
-              if pkg.deps == [ ]
-              then [ (defToPkg pkg) ]
-              else (builtins.concatMap (pkg': newFlattenVisited pkg' (visited // { "${pkg.name}" = true; })) pkg.deps) ++ [ (defToPkg pkg) ];
-        in
-        if (depsAttrExists pkgDefWithName')
-        then (builtins.concatMap getDeps pkgDefWithName'.deps) ++ [ (defToPkg pkgDefWithName') ]
-        else [ (defToPkg pkgDefWithName') ];
-    in
-    pkgs.lib.lists.unique (newFlattenVisited pkgDefWithName { "${pkgDefWithName.name}" = true; });
-
   flattenDepsArray = pkgDefWithNames:
     let
       subpathAttrExists = def: (builtins.hasAttr "subpath" def);
@@ -71,7 +46,7 @@ let
         src = def.src;
         subpath = if (subpathAttrExists def) then def.subpath else "";
       };
-      newFlattenVisited = pkgDefWithName': visited:
+      flattenVisited = pkgDefWithName': visited:
         let
           getDeps = pkg:
             if builtins.hasAttr pkg.name visited
@@ -79,13 +54,13 @@ let
             else
               if pkg.deps == [ ]
               then [ (defToPkg pkg) ]
-              else (builtins.concatMap (pkg': newFlattenVisited pkg' (visited // { "${pkg.name}" = true; })) pkg.deps) ++ [ (defToPkg pkg) ];
+              else (builtins.concatMap (pkg': flattenVisited pkg' (visited // { "${pkg.name}" = true; })) pkg.deps) ++ [ (defToPkg pkg) ];
         in
         if (depsAttrExists pkgDefWithName')
         then (builtins.concatMap getDeps pkgDefWithName'.deps) ++ [ (defToPkg pkgDefWithName') ]
         else [ (defToPkg pkgDefWithName') ];
     in
-    pkgs.lib.lists.unique (builtins.concatMap (x: (newFlattenVisited x { "${x.name}" = true; })) pkgDefWithNames);
+    pkgs.lib.lists.unique (builtins.concatMap (x: (flattenVisited x { "${x.name}" = true; })) pkgDefWithNames);
 in
 racketPkg.overrideAttrs (prev: {
   buildInputs = prev.buildInputs ++ [ racketPkg ];
