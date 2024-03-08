@@ -107,7 +107,3 @@ It would be cool if org mode removed results after closing buffer
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+END_SRC
-
-#+BEGIN_SRC racket :prologue "#lang sicp"
-  (inc 41)
-#+END_SRC
