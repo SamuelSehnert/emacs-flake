@@ -17,13 +17,15 @@
           "aarch64-linux"
           "x86_64-darwin"
           "x86_64-linux"
-        ] (system:
-          f (import nixpkgs {
-            inherit system;
-            overlays = [ emacs-overlay.overlay ];
-          }));
+        ]
+          (system:
+            f (import nixpkgs {
+              inherit system;
+              overlays = [ emacs-overlay.overlay ];
+            }));
 
-    in rec {
+    in
+    rec {
       formatter = eachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       apps = eachSystem (pkgs: {
@@ -41,37 +43,44 @@
         default = pkgs.emacsWithPackagesFromUsePackage {
           package = pkgs.emacs29;
           defaultInitFile = true;
-          config = let
-            mypkgs = {
-              nixfmt = pkgs.nixfmt;
-              git = pkgs.git;
+          config =
+            let
+              mypkgs = {
+                nixfmt = pkgs.nixfmt;
+                git = pkgs.git;
 
-              solargraph = pkgs.solargraph;
-              nil = pkgs.nil;
-            };
-            split = pkgs.lib.strings.splitString ";#"
-              (builtins.readFile ./lisp/init.el);
-            parsed = builtins.foldl' (acc: substring:
-              if pkgs.lib.strings.hasPrefix "NIX" substring then
-                let
-                  # Pull out the NIX prefix
-                  removed = pkgs.lib.strings.removePrefix "NIX" substring;
-                  # Split on commenting ;'s and concat
-                  # This allows for the nix-injections to span multiple lines
-                  inter = builtins.concatStringsSep "\n"
-                    (pkgs.lib.strings.splitString ";" removed);
-                  # Split on $ to find which packages are wanting to be injected
-                  split = pkgs.lib.strings.splitString "$" inter;
-                  output = builtins.foldl' (acc: substring:
-                    if pkgs.lib.strings.hasPrefix "pkgs." substring then
-                      let pkg = pkgs.lib.strings.removePrefix "pkgs." substring;
-                      in acc + "${pkgs.lib.getExe mypkgs.${pkg}}"
-                    else
-                      acc + substring) "" split;
-                in acc + output
-              else
-                acc + substring) "" split;
-          in parsed;
+                solargraph = pkgs.solargraph;
+                nil = pkgs.nil;
+              };
+              split = pkgs.lib.strings.splitString ";#"
+                (builtins.readFile ./lisp/init.el);
+              parsed = builtins.foldl'
+                (acc: substring:
+                  if pkgs.lib.strings.hasPrefix "NIX" substring then
+                    let
+                      # Pull out the NIX prefix
+                      removed = pkgs.lib.strings.removePrefix "NIX" substring;
+                      # Split on commenting ;'s and concat
+                      # This allows for the nix-injections to span multiple lines
+                      inter = builtins.concatStringsSep "\n"
+                        (pkgs.lib.strings.splitString ";" removed);
+                      # Split on $ to find which packages are wanting to be injected
+                      split = pkgs.lib.strings.splitString "$" inter;
+                      output = builtins.foldl'
+                        (acc: substring:
+                          if pkgs.lib.strings.hasPrefix "pkgs." substring then
+                            let pkg = pkgs.lib.strings.removePrefix "pkgs." substring;
+                            in acc + "${pkgs.lib.getExe mypkgs.${pkg}}"
+                          else
+                            acc + substring) ""
+                        split;
+                    in
+                    acc + output
+                  else
+                    acc + substring) ""
+                split;
+            in
+            parsed;
 
           extraEmacsPackages = epkgs:
             with epkgs; [

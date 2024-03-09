@@ -21,9 +21,15 @@ in
   };
   "sicp" = {
     deps = [
-      "rackunit-lib"
       "draw-lib"
+      "r5rs-lib"
+      "rackunit-lib"
+      "snip-lib"
+      "draw-doc"
       "gui-doc"
+      "r5rs-doc"
+      "racket-doc"
+      "scribble-lib"
     ];
     src = fetchFromGitHub {
       owner = "sicp-lang";
@@ -54,12 +60,24 @@ in
     };
   };
   "r5rs-lib" = {
+    deps = [
+      "scheme-lib"
+      "compatibility-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/r5rs-lib.zip";
       sha256 = "sha256-EKth+dASO2bByUgGR/qkRfc4TYOusdHltlmOzexkseE=";
     };
   };
   "r5rs-doc" = {
+    deps = [
+      "mzscheme-doc"
+      "scheme-lib"
+      "scribble-lib"
+      "r5rs-lib"
+      "compatibility-lib"
+      "racket-doc"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/r5rs-doc.zip";
       sha256 = "sha256-lFRiB9Mj7ejMnqO/F9JKLVm/rKCJdk21pOFFyamw6i8=";
@@ -72,6 +90,9 @@ in
     };
   };
   "net-lib" = {
+    deps = [
+      "srfi-lite-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/net-lib.zip";
       sha256 = "sha256-JaFbzAFw+6j+CxasRKpcJv9GJiGcBvDAAZDtVDA+Uhk=";
@@ -83,10 +104,15 @@ in
       "syntax-color-doc"
       "at-exp-lib"
       "draw-doc"
+      "draw-lib"
+      "scribble-lib"
       "snip-lib"
       "string-constants-lib"
       "syntax-color-lib"
       "wxme-lib"
+      "gui-lib"
+      "pict-lib"
+      "racket-doc"
       "string-constants-doc"
       "simple-tree-text-markup-doc"
     ];
@@ -96,6 +122,14 @@ in
     };
   };
   "syntax-color-doc" = {
+    deps = [
+      "gui-doc"
+      "scribble-doc"
+      "gui-lib"
+      "scribble-lib"
+      "racket-doc"
+      "syntax-color-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/syntax-color-doc.zip";
       sha256 = "sha256-LgiItx8juY/PDsQNrssfTsxLzukb747IkUaG9ejrf1s=";
@@ -109,10 +143,13 @@ in
   };
   "draw-doc" = {
     deps = [
+      "gui-doc"
       "pict-doc"
+      "at-exp-lib"
       "gui-lib"
       "pict-lib"
       "scribble-lib"
+      "draw-lib"
       "racket-doc"
     ];
     src = fetchRacketCatalogSrc {
@@ -123,8 +160,15 @@ in
   "pict-doc" = {
     deps = [
       "mzscheme-doc"
+      "draw-doc"
+      "gui-doc"
       "slideshow-doc"
+      "draw-lib"
+      "gui-lib"
+      "scribble-lib"
       "slideshow-lib"
+      "pict-lib"
+      "racket-doc"
       "scribble-doc"
     ];
     src = fetchRacketCatalogSrc {
@@ -134,9 +178,13 @@ in
   };
   "mzscheme-doc" = {
     deps = [
-      "r5rs-lib"
+      "compatibility-lib"
       "r5rs-doc"
+      "r5rs-lib"
+      "racket-doc"
+      "scheme-lib"
       "scheme-doc"
+      "scribble-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/mzscheme-doc.zip";
@@ -145,6 +193,14 @@ in
   };
   "scheme-doc" = {
     deps = [
+      "scheme-lib"
+      "net-lib"
+      "sandbox-lib"
+      "scribble-lib"
+      "racket-index"
+      "racket-doc"
+      "gui-lib"
+      "gui-doc"
       "compatibility-doc"
     ];
     src = fetchFromGitHub {
@@ -157,8 +213,17 @@ in
   };
   "compatibility-doc" = {
     deps = [
+      "scribble-lib"
+      "compatibility-lib"
       "pconvert-lib"
+      "sandbox-lib"
+      "compiler-lib"
+      "gui-lib"
+      "racket-doc"
       "data-doc"
+      "mzscheme-doc"
+      "scheme-lib"
+      "scheme-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/compatibility-doc.zip";
@@ -167,10 +232,15 @@ in
   };
   "data-doc" = {
     deps = [
+      "data-lib"
       "data-enumerate-lib"
+      "racket-doc"
+      "scribble-lib"
       "plot-lib"
       "math-doc"
       "math-lib"
+      "pict-doc"
+      "pict-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/data-doc.zip";
@@ -180,6 +250,7 @@ in
   "math-lib" = {
     deps = [
       "r6rs-lib"
+      "typed-racket-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/math-lib.zip";
@@ -187,12 +258,24 @@ in
     };
   };
   "r6rs-lib" = {
+    deps = [
+      "scheme-lib"
+      "r5rs-lib"
+      "compatibility-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/r6rs-lib.zip";
       sha256 = "sha256-+QblpPsVbI0z0BI7/PDp56vGHwnQBvXjtq+PfZmuCEY=";
     };
   };
   "r6rs-doc" = {
+    deps = [
+      "racket-index"
+      "r5rs-doc"
+      "scribble-lib"
+      "r6rs-lib"
+      "racket-doc"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/r6rs-doc.zip";
       sha256 = "sha256-D/mDyLG4jgfGLEoumze2+i7+X8w2sSH0yIUITOoi5jw=";
@@ -200,10 +283,16 @@ in
   };
   "math-doc" = {
     deps = [
+      "at-exp-lib"
+      "math-lib"
       "plot-doc"
       "plot-gui-lib"
+      "racket-doc"
+      "sandbox-lib"
+      "scribble-lib"
       "typed-racket-doc"
       "typed-racket-lib"
+      "2d-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/math-doc.zip";
@@ -218,9 +307,23 @@ in
   };
   "typed-racket-doc" = {
     deps = [
+      "net-doc"
       "net-cookies-doc"
+      "scheme-lib"
+      "srfi-lite-lib"
       "r6rs-doc"
+      "srfi-doc"
+      "r6rs-lib"
+      "sandbox-lib"
+      "at-exp-lib"
+      "scribble-lib"
+      "pict-lib"
+      "typed-racket-lib"
       "typed-racket-compatibility"
+      "racket-doc"
+      "draw-lib"
+      "web-server-doc"
+      "scheme-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/typed-racket-doc.zip";
@@ -228,6 +331,10 @@ in
     };
   };
   "typed-racket-compatibility" = {
+    deps = [
+      "scheme-lib"
+      "typed-racket-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/typed-racket-compatibility.zip";
       sha256 = "sha256-KqoGMP6W9aAbnY/5NzxFR3npM5Rk2FqcxD0u641JWG4=";
@@ -236,6 +343,11 @@ in
   "net-cookies-doc" = {
     deps = [
       "net-cookies-lib"
+      "racket-doc"
+      "web-server-lib"
+      "web-server-doc"
+      "net-doc"
+      "scribble-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/net-cookies-doc.zip";
@@ -250,6 +362,11 @@ in
   };
   "plot-gui-lib" = {
     deps = [
+      "plot-lib"
+      "math-lib"
+      "gui-lib"
+      "snip-lib"
+      "typed-racket-lib"
       "typed-racket-more"
     ];
     src = fetchRacketCatalogSrc {
@@ -259,8 +376,23 @@ in
   };
   "typed-racket-more" = {
     deps = [
+      "srfi-lite-lib"
+      "net-lib"
+      "net-cookies-lib"
+      "web-server-lib"
+      "db-lib"
+      "draw-lib"
+      "rackunit-lib"
+      "rackunit-gui"
       "rackunit-typed"
+      "snip-lib"
+      "typed-racket-lib"
+      "gui-lib"
+      "pict-lib"
       "images-lib"
+      "racket-index"
+      "sandbox-lib"
+      "pconvert-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/typed-racket-more.zip";
@@ -268,12 +400,24 @@ in
     };
   };
   "images-lib" = {
+    deps = [
+      "draw-lib"
+      "typed-racket-lib"
+      "scribble-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/images-lib.zip";
       sha256 = "sha256-B5wpUTrWLmaf9xU4g0Yn/Gx1/lg1mfdfEXs94OBNp0M=";
     };
   };
   "rackunit-typed" = {
+    deps = [
+      "racket-index"
+      "rackunit-gui"
+      "rackunit-lib"
+      "typed-racket-lib"
+      "testing-util-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/rackunit-typed.zip";
       sha256 = "sha256-UrQp7qfZOpOYrLym9aQhnUA7YjTiawD3TbbbO3Vep6U=";
@@ -281,9 +425,24 @@ in
   };
   "plot-doc" = {
     deps = [
+      "plot-lib"
+      "plot-gui-lib"
       "db-doc"
+      "db-lib"
+      "draw-doc"
+      "draw-lib"
+      "gui-doc"
+      "gui-lib"
+      "pict-doc"
+      "pict-lib"
       "plot-compat"
+      "racket-doc"
+      "scribble-lib"
+      "slideshow-doc"
+      "slideshow-lib"
       "srfi-doc"
+      "math-lib"
+      "math-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/plot-doc.zip";
@@ -292,7 +451,14 @@ in
   };
   "srfi-doc" = {
     deps = [
+      "mzscheme-doc"
+      "scheme-doc"
+      "scheme-lib"
+      "scribble-lib"
       "srfi-lib"
+      "racket-doc"
+      "racket-index"
+      "compatibility-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/srfi-doc.zip";
@@ -300,12 +466,24 @@ in
     };
   };
   "srfi-lib" = {
+    deps = [
+      "scheme-lib"
+      "srfi-lite-lib"
+      "r6rs-lib"
+      "compatibility-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/srfi-lib.zip";
       sha256 = "sha256-OYMawhLQX+KvLpGATUqy5ugxSjXASuBBMJQQ/IfIiww=";
     };
   };
   "plot-compat" = {
+    deps = [
+      "plot-gui-lib"
+      "draw-lib"
+      "plot-lib"
+      "snip-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/plot-compat.zip";
       sha256 = "sha256-vTGIs71P9ZefzLXEdQjyBGRoa7qMwuAUiFPbU7Cv4RI=";
@@ -313,9 +491,13 @@ in
   };
   "db-doc" = {
     deps = [
+      "srfi-lite-lib"
       "web-server-doc"
+      "scribble-lib"
+      "sandbox-lib"
       "web-server-lib"
       "db-lib"
+      "racket-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/db-doc.zip";
@@ -324,6 +506,7 @@ in
   };
   "db-lib" = {
     deps = [
+      "srfi-lite-lib"
       "unix-socket-lib"
       "sasl-lib"
     ];
@@ -339,48 +522,112 @@ in
     };
   };
   "unix-socket-lib" = {
+    deps = [
+      "net-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/unix-socket-lib.zip";
       sha256 = "sha256-dj8sQ5VX3DsoZPu+lbgN0+8lzcoC1pUpmOBr52R3/W8=";
     };
   };
   "web-server-doc" = {
+    deps = [
+      "net-doc"
+      "net-cookies-doc"
+      "rackunit-doc"
+      "db-doc"
+      "scribble-doc"
+      "db-lib"
+      "net-lib"
+      "net-cookies-lib"
+      "rackunit-lib"
+      "sandbox-lib"
+      "scribble-lib"
+      "web-server-lib"
+      "racket-doc"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/web-server-doc.zip";
       sha256 = "sha256-YVMMqr95OjLtWFs/3lWpLG5AQQ18mb4FZhMBEgs8XFI=";
     };
   };
   "web-server-lib" = {
+    deps = [
+      "srfi-lite-lib"
+      "net-lib"
+      "net-cookies-lib"
+      "scribble-text-lib"
+      "parser-tools-lib"
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/web-server-lib.zip";
       sha256 = "sha256-KMdTXxnsEwyMck5gSokPl9zbTelrnrSEUmL4d+6Pk0s=";
     };
   };
   "plot-lib" = {
+    deps = [
+      "draw-lib"
+      "pict-lib"
+      "db-lib"
+      "srfi-lite-lib"
+      "typed-racket-lib"
+      "typed-racket-more"
+      "compatibility-lib"
+      "math-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/plot-lib.zip";
       sha256 = "sha256-uidxjxnhWIvRdH3556zhVBXlnjv74w10k/QlSkeRhU8=";
     };
   };
   "data-enumerate-lib" = {
+    deps = [
+      "data-lib"
+      "math-lib"
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/data-enumerate-lib.zip";
       sha256 = "sha256-CAFIznQs2ZH0uO+9o0Ard2bCugfRe1x8J5PZ+CL/FtE=";
     };
   };
   "pconvert-lib" = {
+    deps = [
+      "compatibility-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/pconvert-lib.zip";
       sha256 = "sha256-bJvQZE7qRtxR7CrU0UFoBYmJKLOJMFfmSAE2i7PHAJs=";
     };
   };
   "slideshow-doc" = {
+    deps = [
+      "scheme-lib"
+      "draw-doc"
+      "gui-doc"
+      "pict-doc"
+      "scribble-doc"
+      "gui-lib"
+      "pict-lib"
+      "scribble-lib"
+      "slideshow-lib"
+      "racket-doc"
+      "at-exp-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/slideshow-doc.zip";
       sha256 = "sha256-w3y6VLzDcFI/NQUtlEyUjjMMauDOzP8i4i8UtTT3Av8=";
     };
   };
   "slideshow-lib" = {
+    deps = [
+      "scheme-lib"
+      "compatibility-lib"
+      "draw-lib"
+      "pict-lib"
+      "gui-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/slideshow-lib.zip";
       sha256 = "sha256-w2XQ3hHR3Y/gGDLOiUzrfz8XhK0cVuplEP5XQ6iTVtc=";
@@ -391,12 +638,21 @@ in
       "srfi-lite-lib"
       "data-lib"
       "icons"
+      "syntax-color-lib"
+      "draw-lib"
+      "snip-lib"
+      "wxme-lib"
+      "pict-lib"
+      "scheme-lib"
+      "scribble-lib"
+      "string-constants-lib"
       "option-contract-lib"
       "2d-lib"
       "compatibility-lib"
-      "net-lib"
       "tex-table"
       "simple-tree-text-markup-lib"
+      "at-exp-lib"
+      "rackunit-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/gui-lib.zip";
@@ -404,6 +660,13 @@ in
     };
   };
   "pict-lib" = {
+    deps = [
+      "scheme-lib"
+      "compatibility-lib"
+      "draw-lib"
+      "syntax-color-lib"
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/pict-lib.zip";
       sha256 = "sha256-zGbJB2TzuWYVTcbp1e2oHWu7CanQ0PFzUA4F94xSLxI=";
@@ -411,7 +674,18 @@ in
   };
   "scribble-lib" = {
     deps = [
+      "scheme-lib"
+      "compatibility-lib"
+      "scribble-text-lib"
       "scribble-html-lib"
+      "planet-lib"
+      "net-lib"
+      "at-exp-lib"
+      "draw-lib"
+      "syntax-color-lib"
+      "sandbox-lib"
+      "typed-racket-lib"
+      "rackunit-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/scribble-lib.zip";
@@ -419,6 +693,11 @@ in
     };
   };
   "scribble-html-lib" = {
+    deps = [
+      "scheme-lib"
+      "at-exp-lib"
+      "scribble-text-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/scribble-html-lib.zip";
       sha256 = "sha256-v5FxevfNIUpanDYX1DdJadRWj+eiQlTbQFa3hiEQQfk=";
@@ -426,7 +705,19 @@ in
   };
   "scribble-doc" = {
     deps = [
+      "racket-index"
+      "net-doc"
+      "scheme-lib"
+      "draw-doc"
+      "at-exp-lib"
+      "compatibility-lib"
+      "draw-lib"
+      "pict-lib"
+      "pict-doc"
+      "sandbox-lib"
+      "scribble-lib"
       "scribble-text-lib"
+      "racket-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/scribble-doc.zip";
@@ -434,6 +725,10 @@ in
     };
   };
   "scribble-text-lib" = {
+    deps = [
+      "scheme-lib"
+      "at-exp-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/scribble-text-lib.zip";
       sha256 = "sha256-F2CsZnORr73/6SCxDH09Y/9ci1tVdl82oI9Ys5l9sVY=";
@@ -441,17 +736,34 @@ in
   };
   "racket-doc" = {
     deps = [
+      "scheme-lib"
+      "net-lib"
+      "sandbox-lib"
+      "scribble-lib"
       "racket-index"
       "rackunit-doc"
       "errortrace-doc"
+      "at-exp-lib"
+      "rackunit-lib"
+      "gui-doc"
+      "gui-lib"
+      "draw-doc"
+      "draw-lib"
+      "pict-lib"
       "readline-lib"
       "readline-doc"
+      "syntax-color-doc"
+      "syntax-color-lib"
+      "scribble-doc"
       "future-visualizer"
       "distributed-places-doc"
+      "distributed-places-lib"
       "serialize-cstruct-lib"
       "cext-lib"
       "net-doc"
       "planet-doc"
+      "compiler-lib"
+      "compatibility-lib"
       "xrepl-lib"
       "xrepl-doc"
     ];
@@ -462,9 +774,17 @@ in
   };
   "xrepl-doc" = {
     deps = [
+      "sandbox-lib"
+      "scribble-lib"
+      "errortrace-doc"
       "macro-debugger"
       "profile-doc"
+      "readline-doc"
+      "macro-debugger-text-lib"
       "profile-lib"
+      "readline-lib"
+      "xrepl-lib"
+      "racket-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/xrepl-doc.zip";
@@ -472,18 +792,34 @@ in
     };
   };
   "xrepl-lib" = {
+    deps = [
+      "readline-lib"
+      "scribble-text-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/xrepl-lib.zip";
       sha256 = "sha256-Qcw798UCFLW+MY7Qr7vtDgjAdtFabRLMnb3MVwgPBxY=";
     };
   };
   "profile-doc" = {
+    deps = [
+      "scribble-lib"
+      "profile-lib"
+      "errortrace-doc"
+      "errortrace-lib"
+      "racket-doc"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/profile-doc.zip";
       sha256 = "sha256-N8DCQYsjMtZpLzqrDFPO9nEdrNG80ktsSnXuGF4OJ/M=";
     };
   };
   "profile-lib" = {
+    deps = [
+      "errortrace-lib"
+      "at-exp-lib"
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/profile-lib.zip";
       sha256 = "sha256-Arnm/lTkhk+5IgUKPV4Fiu5lv7BiTqXR7EWVn+AL/8k=";
@@ -491,8 +827,21 @@ in
   };
   "macro-debugger" = {
     deps = [
+      "class-iop-lib"
+      "compatibility-lib"
+      "data-lib"
+      "gui-lib"
+      "images-lib"
       "images-gui-lib"
+      "parser-tools-lib"
       "macro-debugger-text-lib"
+      "snip-lib"
+      "wxme-lib"
+      "draw-lib"
+      "racket-index"
+      "rackunit-lib"
+      "scribble-lib"
+      "racket-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/macro-debugger.zip";
@@ -500,12 +849,22 @@ in
     };
   };
   "images-gui-lib" = {
+    deps = [
+      "draw-lib"
+      "gui-lib"
+      "string-constants-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/images-gui-lib.zip";
       sha256 = "sha256-jeXOCi/WD99qgeO2ijF3uOt4GEnqY643Kb0jwITWuuk=";
     };
   };
   "macro-debugger-text-lib" = {
+    deps = [
+      "db-lib"
+      "class-iop-lib"
+      "parser-tools-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/macro-debugger-text-lib.zip";
       sha256 = "sha256-NhYHU2XFarhpsX5X23mLL8z/WdycKp67aezHm1bvxro=";
@@ -514,6 +873,9 @@ in
   "planet-doc" = {
     deps = [
       "planet-lib"
+      "scribble-lib"
+      "racket-doc"
+      "scribble-doc"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/planet-doc.zip";
@@ -521,18 +883,32 @@ in
     };
   };
   "planet-lib" = {
+    deps = [
+      "srfi-lite-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/planet-lib.zip";
       sha256 = "sha256-65f/dQiXW4HBJ66U12rYZpkJWAuDIiJdDtnc/JNKbcA=";
     };
   };
   "net-doc" = {
+    deps = [
+      "compatibility-lib"
+      "net-lib"
+      "racket-doc"
+      "scribble-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/net-doc.zip";
       sha256 = "sha256-a6zpYkGuvs1eKyM0r+2UXy8jX2IJXrkTs7g7B0yKBmo=";
     };
   };
   "racket-index" = {
+    deps = [
+      "scribble-lib"
+      "scheme-lib"
+      "at-exp-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/racket-index.zip";
       sha256 = "sha256-DgZgoQUNgT58sTOvKRTjhqUS2Rk1VWVDylXG8AjTa48=";
@@ -540,7 +916,11 @@ in
   };
   "rackunit-doc" = {
     deps = [
+      "racket-index"
+      "racket-doc"
       "rackunit-gui"
+      "rackunit-lib"
+      "scribble-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/rackunit-doc.zip";
@@ -549,7 +929,10 @@ in
   };
   "rackunit-gui" = {
     deps = [
+      "rackunit-lib"
       "class-iop-lib"
+      "data-lib"
+      "gui-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/rackunit-gui.zip";
@@ -564,7 +947,9 @@ in
   };
   "errortrace-doc" = {
     deps = [
+      "racket-doc"
       "errortrace-lib"
+      "scribble-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/errortrace-doc.zip";
@@ -593,6 +978,11 @@ in
     };
   };
   "readline-doc" = {
+    deps = [
+      "scribble-lib"
+      "readline-lib"
+      "racket-doc"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/readline-doc.zip";
       sha256 = "sha256-i1MVKiRD99UKDmxcGzgOTVL79DO/ZMnYe3g8T9WQQkY=";
@@ -600,7 +990,15 @@ in
   };
   "future-visualizer" = {
     deps = [
+      "data-lib"
+      "draw-lib"
+      "pict-lib"
+      "gui-lib"
       "future-visualizer-pict"
+      "scheme-lib"
+      "scribble-lib"
+      "racket-doc"
+      "rackunit-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/future-visualizer.zip";
@@ -608,6 +1006,11 @@ in
     };
   };
   "future-visualizer-pict" = {
+    deps = [
+      "data-lib"
+      "draw-lib"
+      "pict-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/future-visualizer-pict.zip";
       sha256 = "sha256-Pk4k9KlElJShqpw1pQ7F9/mv/haAZzOqBcKcspB/sqU=";
@@ -616,6 +1019,9 @@ in
   "distributed-places-doc" = {
     deps = [
       "distributed-places-lib"
+      "racket-doc"
+      "sandbox-lib"
+      "scribble-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/distributed-places-doc.zip";
@@ -638,6 +1044,7 @@ in
     deps = [
       "compiler-lib"
       "dynext-lib"
+      "scheme-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/cext-lib.zip";
@@ -646,6 +1053,8 @@ in
   };
   "compiler-lib" = {
     deps = [
+      "scheme-lib"
+      "rackunit-lib"
       "zo-lib"
     ];
     src = fetchRacketCatalogSrc {
@@ -666,6 +1075,9 @@ in
     };
   };
   "snip-lib" = {
+    deps = [
+      "draw-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/snip-lib.zip";
       sha256 = "sha256-XIOgURk73xx6SnuSQ6s6uwUl0pbOuxkBtBINdp1bi+w=";
@@ -680,6 +1092,8 @@ in
   "syntax-color-lib" = {
     deps = [
       "parser-tools-lib"
+      "option-contract-lib"
+      "rackunit-lib"
     ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/syntax-color-lib.zip";
@@ -687,24 +1101,48 @@ in
     };
   };
   "parser-tools-lib" = {
+    deps = [
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/parser-tools-lib.zip";
       sha256 = "sha256-xm5WAXwYm1LBN/wRz8tdZ5tYxyrjHnu8EvrqhnOE2Gg=";
     };
   };
   "wxme-lib" = {
+    deps = [
+      "scheme-lib"
+      "compatibility-lib"
+      "snip-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/wxme-lib.zip";
       sha256 = "sha256-a91Lizhn85HUkeKBMszwU28PVHny3HgxJf7yyeoaZpE=";
     };
   };
   "string-constants-doc" = {
+    deps = [
+      "string-constants-lib"
+      "racket-doc"
+      "scribble-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/string-constants-doc.zip";
       sha256 = "sha256-/A8R4bkbPr958Ye86xI2J3Pe8Ljwdj6dhfVovMvkS7g=";
     };
   };
   "simple-tree-text-markup-doc" = {
+    deps = [
+      "scheme-lib"
+      "at-exp-lib"
+      "scribble-lib"
+      "racket-doc"
+      "simple-tree-text-markup-lib"
+      "draw-doc"
+      "draw-lib"
+      "gui-doc"
+      "snip-lib"
+    ];
     src = fetchFromGitHub {
       owner = "racket";
       repo = "simple-tree-text-markup";
@@ -729,6 +1167,9 @@ in
     };
   };
   "data-lib" = {
+    deps = [
+      "rackunit-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/data-lib.zip";
       sha256 = "sha256-B2fPE/MTmoPGMM2CsQTp1k1BgvW8EjN6ulfYDjd7bsU=";
@@ -747,6 +1188,10 @@ in
     };
   };
   "2d-lib" = {
+    deps = [
+      "scribble-lib"
+      "syntax-color-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/2d-lib.zip";
       sha256 = "sha256-bN6igW9JI7oEBo8BcNMJq937nNsJ6jmF8RmzZumla2E=";
@@ -754,6 +1199,8 @@ in
   };
   "compatibility-lib" = {
     deps = [
+      "scheme-lib"
+      "net-lib"
       "sandbox-lib"
     ];
     src = fetchRacketCatalogSrc {
@@ -762,6 +1209,10 @@ in
     };
   };
   "sandbox-lib" = {
+    deps = [
+      "scheme-lib"
+      "errortrace-lib"
+    ];
     src = fetchRacketCatalogSrc {
       url = "https://download.racket-lang.org/releases/8.12/pkgs/sandbox-lib.zip";
       sha256 = "sha256-lDf8zwHMbCsIHZfsVMprriJlIcGMCdQN1L2ST2F/ip4=";
