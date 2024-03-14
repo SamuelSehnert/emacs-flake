@@ -27,7 +27,7 @@
       overlays.default = final: prev: {
         custom-emacs = packages.${prev.system}.default;
       };
-
+      
       packages = eachSystem
         (pkgs: {
           default = pkgs.emacsWithPackagesFromUsePackage {
@@ -51,7 +51,7 @@
             package =
               let
                 emacsRuntimeDeps = with pkgs; [
-                  nixfmt
+                  nixpkgs-fmt
                   (
                     let racketSet = (import ./lib/racketWithPkgs) pkgs;
                     in (with racketSet; racketWithPkgs (with racketPkgs; [ sicp ]))
