@@ -7,9 +7,25 @@
   (menu-bar-mode -1) 
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
+  (setq ring-bell-function 'ignore)
+  (setq compilation-scroll-output t)
+  (setq scroll-margin 8
+	scroll-step 1
+	scroll-conservatively 10000
+	scroll-preserve-screen-position 1)
 #+END_SRC
 
+#+RESULTS:
+: 1
+
 ** Package Settings
+*** Themes
+#+BEGIN_SRC emacs-lisp
+  (use-package zenburn-theme
+    :ensure t
+    :init (load-theme 'zenburn t))
+#+END_SRC
+
 *** Evil packages
 #+BEGIN_SRC emacs-lisp
   (use-package evil
@@ -96,14 +112,6 @@ It would be cool if org mode removed results after closing buffer
 
 *** Extra Packages
 #+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :ensure t
-    :mode (("\\.pdf\\'" . pdf-view-mode))
-    :hook (pdf-view-mode . pdf-view-themed-minor-mode))
-
-  (use-package pdf-view-restore
-    :ensure t
-    :after pdf-tools
-    :config
-    (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+  (use-package sicp
+    :ensure t)
 #+END_SRC
